@@ -10,6 +10,9 @@ The algorithm is simple:
 
 This algorithm is implemented in [Wordle.kt](src/main/kotlin/Wordle.kt)
 
+### Known Issues
+This algorithm is pretty naive. It doesn't keep track of previous guesses or of the letter positions that they tested, which means that it wastes guesses re-discovering information that it already knows.
+
 ## Data
 This implementation relies on a dictionary of 5 letter long English language words that has been ranked in order of frequency of use. I grabbed my dataset from [kaggle.com](https://www.kaggle.com/wheelercode/dictionary-word-frequency) and filtered it to contain only five letter words using the code in [FilterWordList.kt](src/main/kotlin/FilterWordList.kt). 
 

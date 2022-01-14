@@ -18,6 +18,8 @@ class Wordle(
         // the letters that we know are not present in the solution
         val absentLetters: MutableSet<String> = HashSet()
 
+        val pastGuesses: MutableSet<String> = HashSet()
+
         for (turn in 0 until numGuesses) {
             val nextGuess = if (turn == 0) {
                 // on the first iteration, guess the most frequently used word
@@ -29,6 +31,9 @@ class Wordle(
                 dictionary.filter { guess ->
                     // any guess must match our regex
                     regex.matchEntire(guess) != null
+                }.filter { guess ->
+                    // let's not repeat ourselves
+                    !pastGuesses.contains(guess)
                 }.first { guess ->
                     // and it must contain all the present letters that we've found
                     presentLetters.all { presentLetter -> guess.contains(presentLetter) }
@@ -37,6 +42,7 @@ class Wordle(
             println("Guess ${turn + 1} is $nextGuess")
 
             val state = guess(nextGuess)
+            pastGuesses.add(nextGuess)
             if (state.all { it == Evaluation.CORRECT }) {
                 println("The solution is $nextGuess")
                 return;
@@ -50,6 +56,7 @@ class Wordle(
                         Evaluation.ABSENT -> absentLetters.add(letter)
                     }
                 }
+
                 println("Correct letters: $correctLetters")
                 println("Known present letters: $presentLetters")
                 println("Known absent letters: $absentLetters")
