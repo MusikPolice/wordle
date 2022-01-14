@@ -20,7 +20,8 @@ class Wordle(
 
         for (turn in 0 until numGuesses) {
             val nextGuess = if (turn == 0) {
-                // on the first iteration, guess the most frequent word
+                // on the first iteration, guess the most frequently used word
+                // this could be optimized by considering letter frequencies, ngram frequencies, and eliminating duplicate characters
                 dictionary[0]
             } else {
                 // on subsequent iterations, regex the dictionary to come up with a good guess
@@ -40,6 +41,7 @@ class Wordle(
                 println("The solution is $nextGuess")
                 return;
             } else {
+                // keep track of what we know so far
                 state.mapIndexed{ i, evaluation ->
                     val letter = nextGuess[i].toString()
                     when (evaluation) {
@@ -56,16 +58,18 @@ class Wordle(
         }
 
         // the game only allows for a limited number of guesses
-        println("Failed to find a solution")
+        println("Out of guesses! The correct solution was $solution")
     }
 
     private fun buildRegex(
         correctLetters: List<String?>,
         absentLetters: Set<String>
     ): Regex {
-        // assemble a regex like (a|b|c) that matches any letter that might exist at a position in the solution
+        // assemble a regex like [abc] that matches any letter that might exist at a position in the solution
         val missingCharClass = listOf("a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t",
             "u","v","w","x","y","z").filter { !absentLetters.contains(it) }.joinToString("","[","]")
+
+        // this is obviously not the optimal regex, but it works and I'm lazy
         val sb = StringBuilder()
         sb.append("^")
         correctLetters.map {
@@ -82,6 +86,7 @@ class Wordle(
         if (guess.length != solution.length) {
             throw RuntimeException("Guess is the wrong length")
         } else {
+            // as it turns out, the business logic for wordle is ridiculously simple
             return guess.mapIndexed{ i, char ->
                 if (solution[i] == char) {
                     Evaluation.CORRECT
@@ -101,7 +106,7 @@ enum class Evaluation {
     PRESENT     // a correct letter in the wrong place
 }
 
-fun main(args: Array<String>) {
+fun main() {
     val path = Path.of(Wordle::class.java.classLoader.getResource("fiveletterwords.txt").toURI())
     val dictionary = Files.readAllLines(path)
     val wordle = Wordle(dictionary, dictionary[Random.nextInt(dictionary.size)])
