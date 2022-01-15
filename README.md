@@ -40,6 +40,10 @@ The solution is effie
 ```
 In this case, the solution to the puzzle was found, but guessing "field" right after "first" was wasteful, because we already know that "f" is not in the first position. The next guess, "knife", is much smarter, because it tries a new position for "f", which helps to expand what we know about the solution.
 
+### Performance
+The `--quantify` flag measures the performance of the algorithm by solving for every word in the dictionary, reporting the average number of guesses that were required to find a solution.
+* `#b998d9b0` required 6.13 guesses
+
 ## Data
 This implementation relies on a dictionary of 5 letter long English language words that has been ranked in order of frequency of use. I grabbed my dataset from [kaggle.com](https://www.kaggle.com/wheelercode/dictionary-word-frequency) and filtered it to contain only five letter words using the code in [FilterWordList.kt](src/main/kotlin/FilterWordList.kt). 
 
