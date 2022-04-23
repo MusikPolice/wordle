@@ -45,7 +45,9 @@ The `--quantify` flag measures the performance of the algorithm by solving for e
 * `#b998d9b0` required 6.13 guesses
 
 ## Data
-This implementation relies on a dictionary of 5 letter long English language words that has been ranked in order of frequency of use. I grabbed my dataset from [kaggle.com](https://www.kaggle.com/wheelercode/dictionary-word-frequency) and filtered it to contain only five letter words using the code in [FilterWordList.kt](src/main/kotlin/FilterWordList.kt). 
+* This implementation relies on a dictionary of 5 letter long English language words that has been ranked in order of frequency of use. I grabbed my dataset from [kaggle.com](https://www.kaggle.com/wheelercode/dictionary-word-frequency) and filtered it to contain only five letter words using the code in [FilterWordList.kt](src/main/kotlin/FilterWordList.kt).
+* English language monogram frequency in [`englishmonograms.txt`](src/main/resources/englishmonograms.txt) came from [The University of Notre Dame](https://www3.nd.edu/~busiforc/handouts/cryptography/letterfrequencies.html).
+* English language bigram frequency in  [`englishbigrams.txt`](src/main/resources/englishbigrams.txt) came from [Practical Cryptography](http://practicalcryptography.com/cryptanalysis/letter-frequencies-various-languages/english-letter-frequencies/).
 
 ## Next Steps
 Right now, this code can only solve a wordle that you already know the answer to. In that sense, it's really just a proof of concept for the algorithm. In the future, I'd like to expand on this code to include a visualization of the game, or maybe even to play against the actual website.

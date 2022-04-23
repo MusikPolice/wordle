@@ -122,8 +122,7 @@ enum class Evaluation {
 
 fun main(args: Array<String>) {
     println("Loading dictionary")
-    val path = Path.of(Wordle::class.java.classLoader.getResource("fiveletterwords.txt").toURI())
-    val dictionary = Files.readAllLines(path)
+    val dictionary = Utils.loadLinesFromFile("fiveletterwords.txt")
     println("Found ${dictionary.size} words\n")
 
     val parser = ArgParser("Wordle")
