@@ -1,3 +1,5 @@
+package ca.jonathanfritz.wordle
+
 import java.nio.file.Files
 import java.nio.file.Path
 

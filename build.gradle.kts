@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.5.10"
+    kotlin("jvm") version "1.6.21"
     application
 }
 
@@ -14,7 +14,9 @@ repositories {
 
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.4")
+
     testImplementation(kotlin("test"))
+    testImplementation("org.assertj:assertj-core:3.22.0")
 }
 
 tasks.test {
@@ -22,9 +24,9 @@ tasks.test {
 }
 
 tasks.withType<KotlinCompile>() {
-    kotlinOptions.jvmTarget = "13"
+    kotlinOptions.jvmTarget = "12"
 }
 
 application {
-    mainClass.set("MainKt")
+    mainClass.set("ca.jonathanfritz.wordle.Wordle")
 }

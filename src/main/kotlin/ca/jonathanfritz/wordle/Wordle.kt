@@ -1,7 +1,7 @@
+package ca.jonathanfritz.wordle
+
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
-import java.nio.file.Files
-import java.nio.file.Path
 import kotlin.random.Random
 
 class Wordle(

@@ -1,6 +1,7 @@
+package ca.jonathanfritz.wordle
+
 import java.nio.file.Files
 import java.nio.file.Path
-import kotlin.streams.toList
 
 /**
  * Utility function for pruning the incoming dictionary from kaggle down to only 5 letter words
