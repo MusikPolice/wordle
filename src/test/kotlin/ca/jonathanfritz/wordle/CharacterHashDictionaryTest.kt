@@ -15,6 +15,7 @@ internal class CharacterHashDictionaryTest {
 
     @Test
     fun removeTest() {
+        // initial dictionary of words is immutable
         val words = listOf("fever", "focus", "slick", "probe", "audio")
         val dict = CharacterHashDictionary(words)
 

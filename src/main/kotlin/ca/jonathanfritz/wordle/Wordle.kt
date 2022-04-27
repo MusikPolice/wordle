@@ -5,7 +5,7 @@ import kotlinx.cli.ArgType
 import kotlin.random.Random
 
 class Wordle(
-    private val dictionary: List<String>,
+    private val wordList: List<String>,
     private val solution: String,
     private val numGuesses: Int = 5
 ) {
@@ -15,51 +15,37 @@ class Wordle(
      * @return the number of turns required to find a solution
      */
     fun run(): Int {
-        // the letters that we know are present in the solution, in their known positions
-        val correctLetters: MutableList<String?> = mutableListOf(*(solution.indices).map { null }.toTypedArray())
+        val correctLetters: MutableSet<Char> = HashSet()
+        val presentLetters: MutableSet<Char> = HashSet()
+        val absentLetters: MutableSet<Char> = HashSet()
 
-        // the letters that we know are present in the solution, even if we don't know their position just yet
-        val presentLetters: MutableSet<String> = HashSet()
-
-        // the letters that we know are not present in the solution
-        val absentLetters: MutableSet<String> = HashSet()
-
-        val pastGuesses: MutableSet<String> = HashSet()
-
+        var dictionary = CharacterHashDictionary(wordList)
         for (turn in 0 until numGuesses) {
-            val nextGuess = if (turn == 0) {
-                // on the first iteration, guess the most frequently used word
-                // this could be optimized by considering letter frequencies, ngram frequencies, and eliminating duplicate characters
-                dictionary[0]
-            } else {
-                // on subsequent iterations, regex the dictionary to come up with a good guess
-                val regex = buildRegex(correctLetters, absentLetters)
-                dictionary.filter { guess ->
-                    // any guess must match our regex
-                    regex.matchEntire(guess) != null
-                }.filter { guess ->
-                    // let's not repeat ourselves
-                    !pastGuesses.contains(guess)
-                }.first { guess ->
-                    // and it must contain all the present letters that we've found
-                    presentLetters.all { presentLetter -> guess.contains(presentLetter) }
-                }
-            }
+            val remainingWords = dictionary.words()
+            println("${remainingWords.size} words remain in the dictionary")
+            val nextGuess = remainingWords.first()
             println("Guess ${turn + 1} is $nextGuess")
 
             val state = guess(nextGuess)
-            pastGuesses.add(nextGuess)
             if (state.all { it == Evaluation.CORRECT }) {
                 println("The solution is $nextGuess")
                 return turn + 1
             } else {
                 // keep track of what we know so far
                 state.mapIndexed{ i, evaluation ->
-                    val letter = nextGuess[i].toString()
+                    val letter = nextGuess[i]
                     when (evaluation) {
-                        Evaluation.CORRECT -> correctLetters[i] = letter
-                        Evaluation.PRESENT -> presentLetters.add(letter)
-                        Evaluation.ABSENT -> absentLetters.add(letter)
+                        Evaluation.CORRECT -> {
+                            correctLetters.add(letter)
+                        }
+                        Evaluation.PRESENT -> {
+                            presentLetters.add(letter)
+                            dictionary = dictionary.remove(letter, i)
+                        }
+                        Evaluation.ABSENT -> {
+                            absentLetters.add(letter)
+                            dictionary = dictionary.remove(letter)
+                        }
                     }
                 }
 
@@ -73,27 +59,6 @@ class Wordle(
         // the game only allows for a limited number of guesses
         println("Out of guesses! The correct solution was $solution")
         return numGuesses
-    }
-
-    private fun buildRegex(
-        correctLetters: List<String?>,
-        absentLetters: Set<String>
-    ): Regex {
-        // assemble a regex like [abc] that matches any letter that might exist at a position in the solution
-        val missingCharClass = listOf("a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t",
-            "u","v","w","x","y","z").filter { !absentLetters.contains(it) }.joinToString("","[","]")
-
-        // this is obviously not the optimal regex, but it works and I'm lazy
-        val sb = StringBuilder()
-        sb.append("^")
-        correctLetters.map {
-            when (it) {
-                null -> missingCharClass
-                else -> it
-            }
-        }.forEach { sb.append(it) }
-        sb.append("$")
-        return Regex(sb.toString())
     }
 
     private fun guess(guess: String): List<Evaluation> {
