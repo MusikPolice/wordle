@@ -24,11 +24,35 @@ class CharacterHashDictionary(
         }
     }
 
-    fun remove(character: Char, vararg positions: Int = IntArray(wordLength) { i -> i }): CharacterHashDictionary {
-        val wordsToRemove = positions.map { characterPosition -> dict[characterPosition] }
-            .flatMap { characterMap -> characterMap[character] ?: emptyList() }
-            .distinct()
+    fun remove(evaluations: List<CharacterEvaluation>): CharacterHashDictionary {
+        if (evaluations.size != wordLength) {
+            throw IllegalArgumentException("Specified list of evaluations must have size equal to word length: One evaluation per character in the guessed word")
+        }
 
+        val wordsToRemove = evaluations.flatMapIndexed { i, charEval ->
+            when (charEval.evaluation) {
+                Evaluation.PRESENT -> {
+                    // char is present somewhere but not here
+                    // eliminate all words that have char at this position
+                    dict[i][charEval.character] ?: emptyList()
+                }
+                Evaluation.ABSENT -> {
+                    // char is not present in the solution
+                    // eliminate all words that have char in any position
+                    dict.flatMap { characterMap ->
+                        characterMap[charEval.character]?.toList() ?: emptyList()
+                    }.distinct()
+                }
+                Evaluation.CORRECT -> {
+                    // char must be present in this position
+                    // eliminate all words that do not have char in this position
+                    (words - (dict[i][charEval.character] ?: emptyList()))
+                }
+            }
+        }.distinct()
+        println("Identified ${wordsToRemove.size} invalid words")
+
+        // TODO: Re-indexing the data structure is really slow for big word lists - consider mutating in place?
         return CharacterHashDictionary(words - wordsToRemove, wordLength)
     }
 
@@ -37,6 +61,6 @@ class CharacterHashDictionary(
 
     // returns the remaining words in no particular order
     fun words(): List<String> = dict.flatMap { map -> map.flatMap { entry -> entry.value } }.distinct()
-    
+
     // TODO: overload of words() that accepts a function that affects sort order of returned list
 }

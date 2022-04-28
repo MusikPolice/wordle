@@ -16,22 +16,19 @@ internal class CharacterHashDictionaryTest {
     @Test
     fun removeTest() {
         // initial dictionary of words is immutable
-        val words = listOf("fever", "focus", "slick", "probe", "audio")
+        val words = listOf("fever", "cover", "slick", "probe", "audio")
         val dict = CharacterHashDictionary(words)
 
-        // removing all instances of 'i' should drop "slick" and "audio"
-        var updated = dict.remove('i')
-        assertThat(updated.size()).isEqualTo(3)
-        assertThat(updated.words()).containsExactlyInAnyOrder("fever", "focus","probe")
-
-        // removing instances of 'i' at position 2 should only drop "slick"
-        updated = dict.remove('i', 2)
-        assertThat(updated.size()).isEqualTo(4)
-        assertThat(updated.words()).containsExactlyInAnyOrder("fever", "focus","probe", "audio")
-
-        // removing instances of 'f' at position 3 should not drop any words
-        updated = dict.remove('f', 3)
-        assertThat(updated.size()).isEqualTo(5)
-        assertThat(updated.words()).containsExactlyInAnyOrder(*words.toTypedArray())
+        // simulate a guess of "femur", answer is "cover"
+        // this should eliminate "fever", "slick", "audio", and "probe"; leaving only "cover" as a possibility
+        val updated = dict.remove(listOf(
+            CharacterEvaluation('f', Evaluation.ABSENT),    // removes "fever"
+            CharacterEvaluation('e', Evaluation.PRESENT),   // removes "slick" and "audio"
+            CharacterEvaluation('m', Evaluation.ABSENT),    // no-op
+            CharacterEvaluation('u', Evaluation.ABSENT),    // removes "audio"
+            CharacterEvaluation('r', Evaluation.CORRECT)    // removes "probe"
+        ))
+        assertThat(updated.size()).isEqualTo(1)
+        assertThat(updated.words()).containsExactly("cover")
     }
 }

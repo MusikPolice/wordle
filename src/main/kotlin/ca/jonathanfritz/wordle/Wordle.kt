@@ -14,7 +14,7 @@ class Wordle(
      * Attempts to solve the puzzle
      * @return the number of turns required to find a solution
      */
-    fun run(): Int {
+    fun run(debugOutput: Boolean = false): Int {
         val correctLetters: MutableSet<Char> = HashSet()
         val presentLetters: MutableSet<Char> = HashSet()
         val absentLetters: MutableSet<Char> = HashSet()
@@ -28,36 +28,41 @@ class Wordle(
 
             val state = guess(nextGuess)
             if (state.all { it == Evaluation.CORRECT }) {
-                println("The solution is $nextGuess")
+                println("The solution is $nextGuess\n")
                 return turn + 1
             } else {
-                // keep track of what we know so far
-                state.mapIndexed{ i, evaluation ->
-                    val letter = nextGuess[i]
-                    when (evaluation) {
-                        Evaluation.CORRECT -> {
-                            correctLetters.add(letter)
-                        }
-                        Evaluation.PRESENT -> {
-                            presentLetters.add(letter)
-                            dictionary = dictionary.remove(letter, i)
-                        }
-                        Evaluation.ABSENT -> {
-                            absentLetters.add(letter)
-                            dictionary = dictionary.remove(letter)
+                val characterEvaluations = state.mapIndexed{ i, evaluation ->
+                    CharacterEvaluation(nextGuess.toCharArray()[i], evaluation)
+                }
+                dictionary = dictionary.remove(characterEvaluations)
+
+                if (debugOutput) {
+                    // keep track of what we know so far
+                    state.mapIndexed { i, evaluation ->
+                        val letter = nextGuess[i]
+                        when (evaluation) {
+                            Evaluation.CORRECT -> {
+                                correctLetters.add(letter)
+                            }
+                            Evaluation.PRESENT -> {
+                                presentLetters.add(letter)
+                            }
+                            Evaluation.ABSENT -> {
+                                absentLetters.add(letter)
+                            }
                         }
                     }
-                }
 
-                println("Correct letters: $correctLetters")
-                println("Known present letters: $presentLetters")
-                println("Known absent letters: $absentLetters")
-                println("")
+                    println("Correct letters: $correctLetters")
+                    println("Known present letters: $presentLetters")
+                    println("Known absent letters: $absentLetters")
+                    println("")
+                }
             }
         }
 
         // the game only allows for a limited number of guesses
-        println("Out of guesses! The correct solution was $solution")
+        println("Out of guesses! The correct solution was $solution\n")
         return numGuesses
     }
 
@@ -79,12 +84,6 @@ class Wordle(
     }
 }
 
-enum class Evaluation {
-    CORRECT,    // a correct letter in the correct place
-    ABSENT,     // an incorrect letter
-    PRESENT     // a correct letter in the wrong place
-}
-
 fun main(args: Array<String>) {
     println("Loading dictionary")
     val dictionary = Utils.loadLinesFromFile("fiveletterwords.txt")
@@ -101,8 +100,8 @@ fun main(args: Array<String>) {
     } else if (solution != null && solution!!.isNotBlank()) {
         Wordle(dictionary, solution!!).run()
     } else if (quantify == true) {
-        val score = dictionary.map { it ->
-            Wordle(dictionary, it, 100).run()
+        val score = dictionary.map {
+            Wordle(dictionary, it, 100).run(debugOutput = false)
         }.average()
         println("On average, it took $score guesses to solve the puzzle")
     } else {
