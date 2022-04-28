@@ -100,8 +100,9 @@ fun main(args: Array<String>) {
     } else if (solution != null && solution!!.isNotBlank()) {
         Wordle(dictionary, solution!!).run()
     } else if (quantify == true) {
-        val score = dictionary.map {
-            Wordle(dictionary, it, 100).run(debugOutput = false)
+        val score = dictionary.mapIndexed { i, answer ->
+            println("$i/${dictionary.size}: Answer is $answer")
+            Wordle(dictionary, answer, 100).run(debugOutput = false)
         }.average()
         println("On average, it took $score guesses to solve the puzzle")
     } else {
