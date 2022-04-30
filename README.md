@@ -7,7 +7,7 @@ The algorithm is simple:
 2. Use the results to filter out words that violate any new knowledge that was gained
 3. Repeat until finding the solution or running out of guesses
 
-This algorithm is implemented in [Wordle.kt](src/main/kotlin/Wordle.kt)
+This algorithm is implemented in [Wordle.kt](src/main/kotlin/ca/jonathanfritz/wordle/Wordle.kt)
 
 ### Known Issues
 This algorithm is pretty naive. Some limitations include:

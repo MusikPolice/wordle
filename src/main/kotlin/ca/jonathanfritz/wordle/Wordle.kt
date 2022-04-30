@@ -19,9 +19,10 @@ class Wordle(
         val presentLetters: MutableSet<Char> = HashSet()
         val absentLetters: MutableSet<Char> = HashSet()
 
+        val comparator = MonogramComparator()
         var dictionary = CharacterHashDictionary(wordList)
         for (turn in 0 until numGuesses) {
-            val remainingWords = dictionary.words()
+            val remainingWords = dictionary.words(comparator)
             println("${remainingWords.size} words remain in the dictionary")
             val nextGuess = remainingWords.first()
             println("Guess ${turn + 1} is $nextGuess")

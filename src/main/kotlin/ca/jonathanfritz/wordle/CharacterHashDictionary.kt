@@ -62,5 +62,8 @@ class CharacterHashDictionary(
     // returns the remaining words in no particular order
     fun words(): List<String> = dict.flatMap { map -> map.flatMap { entry -> entry.value } }.distinct()
 
-    // TODO: overload of words() that accepts a function that affects sort order of returned list
+    // returns the remaining words sorted with the specified comparator
+    fun words(comparator: Comparator<in String>): List<String> {
+        return words().sortedWith(comparator)
+    }
 }
