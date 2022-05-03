@@ -1,5 +1,10 @@
 package ca.jonathanfritz.wordle
 
+import java.util.*
+import kotlin.Comparator
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+
 class CharacterHashDictionary(
     private val words: List<String>,
     private val wordLength: Int = 5
@@ -8,16 +13,16 @@ class CharacterHashDictionary(
     // list contains one element for each character position
     // each element contains a map keyed on character, where the map value is the set of words that have the key
     // character in the list position
-    private val dict: MutableList<MutableMap<Char, MutableSet<String>>> = ArrayList(wordLength)
+    private val dict: MutableList<MutableMap<Char, MutableList<String>>> = ArrayList(wordLength)
 
     init {
         words.forEach{ word ->
             word.forEachIndexed{ i, char ->
                 if (dict.size < i + 1) {
-                    dict.add(HashMap())
+                    dict.add(HashMap(26))
                 }
                 if (!dict[i].containsKey(char)) {
-                    dict[i][char] = HashSet()
+                    dict[i][char] = LinkedList()
                 }
                 dict[i][char]?.add(word)
             }
@@ -60,7 +65,7 @@ class CharacterHashDictionary(
     fun size():Int = words().size
 
     // returns the remaining words in no particular order
-    fun words(): List<String> = dict.flatMap { map -> map.flatMap { entry -> entry.value } }.distinct()
+    fun words(): List<String> = words
 
     // returns the remaining words sorted with the specified comparator
     fun words(comparator: Comparator<in String>): List<String> {

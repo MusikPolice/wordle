@@ -14,12 +14,11 @@ class Wordle(
      * Attempts to solve the puzzle
      * @return the number of turns required to find a solution
      */
-    fun run(debugOutput: Boolean = false): Int {
+    fun run(comparator: Comparator<in String>, debugOutput: Boolean = false): Int {
         val correctLetters: MutableSet<Char> = HashSet()
         val presentLetters: MutableSet<Char> = HashSet()
         val absentLetters: MutableSet<Char> = HashSet()
 
-        val comparator = MonogramComparator()
         var dictionary = CharacterHashDictionary(wordList)
         for (turn in 0 until numGuesses) {
             val remainingWords = dictionary.words(comparator)
@@ -96,14 +95,15 @@ fun main(args: Array<String>) {
     val quantify by parser.option(ArgType.Boolean, shortName = "q", description = "Quantify skill of the algorithm")
     parser.parse(args)
 
+    val comparator = MonogramComparator()
     if (random == true) {
-        Wordle(dictionary, dictionary[Random.nextInt(dictionary.size)]).run()
+        Wordle(dictionary, dictionary[Random.nextInt(dictionary.size)]).run(comparator, true)
     } else if (solution != null && solution!!.isNotBlank()) {
-        Wordle(dictionary, solution!!).run()
+        Wordle(dictionary, solution!!).run(comparator, true)
     } else if (quantify == true) {
         val score = dictionary.mapIndexed { i, answer ->
             println("$i/${dictionary.size}: Answer is $answer")
-            Wordle(dictionary, answer, 100).run(debugOutput = false)
+            Wordle(dictionary, answer, 100).run(comparator)
         }.average()
         println("On average, it took $score guesses to solve the puzzle")
     } else {

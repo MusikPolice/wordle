@@ -25,6 +25,7 @@ I intend to fix these issues by ranking the remaining words in the dictionary by
 The `--quantify` flag measures the performance of the algorithm by solving for every word in the dictionary and reporting the average number of guesses that were required to find a solution.
 * `#b998d9b0` required 6.13 guesses
 * `#12565f6` required 6.42 guesses
+* `#05fdc23` required 5.15 guesses
 
 ## Data
 * The word list comes from [this pastebin](https://paste.ee/p/4zigF) of Wordle answers
