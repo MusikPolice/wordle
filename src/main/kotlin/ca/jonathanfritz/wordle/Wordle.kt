@@ -19,7 +19,7 @@ class Wordle(
         val presentLetters: MutableSet<Char> = HashSet()
         val absentLetters: MutableSet<Char> = HashSet()
 
-        var dictionary = CharacterHashDictionary(wordList)
+        var dictionary = GraphDictionary(wordList)
         for (turn in 0 until numGuesses) {
             val remainingWords = dictionary.words(comparator)
             println("${remainingWords.size} words remain in the dictionary")
@@ -86,8 +86,8 @@ class Wordle(
 
 fun main(args: Array<String>) {
     println("Loading dictionary")
-    val dictionary = Utils.loadLinesFromFile("fiveletterwords.txt")
-    println("Found ${dictionary.size} words\n")
+    val words = Utils.loadLinesFromFile("fiveletterwords.txt")
+    println("Found ${words.size} words\n")
 
     val parser = ArgParser("Wordle")
     val random by parser.option(ArgType.Boolean, shortName = "r", description = "Solve a random puzzle")
@@ -97,13 +97,13 @@ fun main(args: Array<String>) {
 
     val comparator = MonogramComparator()
     if (random == true) {
-        Wordle(dictionary, dictionary[Random.nextInt(dictionary.size)]).run(comparator, true)
+        Wordle(words, words[Random.nextInt(words.size)]).run(comparator, true)
     } else if (solution != null && solution!!.isNotBlank()) {
-        Wordle(dictionary, solution!!).run(comparator, true)
+        Wordle(words, solution!!).run(comparator, true)
     } else if (quantify == true) {
-        val score = dictionary.mapIndexed { i, answer ->
-            println("$i/${dictionary.size}: Answer is $answer")
-            Wordle(dictionary, answer, 100).run(comparator)
+        val score = words.mapIndexed { i, answer ->
+            println("$i/${words.size}: Answer is $answer")
+            Wordle(words, answer, 100).run(comparator)
         }.average()
         println("On average, it took $score guesses to solve the puzzle")
     } else {

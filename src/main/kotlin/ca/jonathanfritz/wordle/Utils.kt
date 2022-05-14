@@ -10,7 +10,7 @@ class Utils {
             return Files.readAllLines(path)
         }
 
-        fun getPathToFile(filename:String): Path  =
+        private fun getPathToFile(filename:String): Path  =
             Path.of(Utils::class.java.classLoader.getResource(filename).toURI())
     }
 }
