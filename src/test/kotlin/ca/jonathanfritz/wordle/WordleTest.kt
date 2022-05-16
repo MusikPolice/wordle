@@ -17,6 +17,7 @@ internal class WordleTest {
     // inject comparator - avg: 462, p50: 456, p90: 476
     // linked list       - avg: 491, p50: 454, p90: 544
     // graph dictionary  - avg: 163, p50: 157, p90: 165
+    // insertion sort    - avg: 196, p50: 190, p90: 195
     @Test
     fun runtimeTest() {
         val groupSize = 10

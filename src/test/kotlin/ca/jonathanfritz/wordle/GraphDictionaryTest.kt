@@ -1,13 +1,19 @@
 package ca.jonathanfritz.wordle
 
+import ca.jonathanfritz.wordle.comparators.MonogramComparator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 internal class GraphDictionaryTest {
 
+    private val comparator = MonogramComparator()
+
     @Test
     fun removeCharTest() {
-        val dict = GraphDictionary(listOf("toast", "zupas", "leges", "model", "bocca", "ekkas", "newed", "guqin", "sunup", "dholl"))
+        val dict = GraphDictionary(
+            listOf("toast", "zupas", "leges", "model", "bocca", "ekkas", "newed", "guqin", "sunup", "dholl"),
+            comparator
+        )
 
         // four words containing the letter 'a' will be removed
         dict.removeChar('a')
@@ -24,7 +30,10 @@ internal class GraphDictionaryTest {
 
     @Test
     fun removeCharAtTest() {
-        val dict = GraphDictionary(listOf("toast", "zupas", "leges", "model", "bocca", "ekkas", "newed", "guqin", "sunup", "dholl"))
+        val dict = GraphDictionary(
+            listOf("toast", "zupas", "leges", "model", "bocca", "ekkas", "newed", "guqin", "sunup", "dholl"),
+            comparator
+        )
 
         // three words containing the letter 'o' in position 1 will be removed
         dict.removeCharAt(1, 'o')
@@ -41,7 +50,10 @@ internal class GraphDictionaryTest {
 
     @Test
     fun removeNotCharAtTest() {
-        val dict = GraphDictionary(listOf("token", "zupas", "leges", "model", "robes", "ekkas", "newed", "guqin", "sunup", "dholl"))
+        val dict = GraphDictionary(
+            listOf("token", "zupas", "leges", "model", "robes", "ekkas", "newed", "guqin", "sunup", "dholl"),
+            comparator
+        )
 
         // seven words that do not have an 'o' in position 1 will be removed
         dict.removeNotCharAt(1, 'o')
@@ -58,7 +70,7 @@ internal class GraphDictionaryTest {
     @Test
     fun removeTest() {
         val words = listOf("fever", "cover", "slick", "probe", "audio")
-        val dict = GraphDictionary(words)
+        val dict = GraphDictionary(words, comparator)
 
         // simulate a guess of "femur", answer is "cover"
         // this should eliminate "fever", "slick", "audio", and "probe"; leaving only "cover" as a possibility
@@ -71,20 +83,5 @@ internal class GraphDictionaryTest {
         ))
         assertThat(updated.size()).isEqualTo(1)
         assertThat(updated.words()).containsExactly("cover")
-    }
-
-    @Test
-    fun wordsTest() {
-        val expected = listOf("fever", "cover", "slick", "probe", "audio")
-        val dict = GraphDictionary(expected)
-
-        // unsorted
-        assertThat(dict.words()).containsExactlyInAnyOrder(*expected.toTypedArray())
-
-        // sorted alphabetically
-        assertThat(dict.words { o1, o2 -> o1.compareTo(o2) }).containsExactly(*expected.sorted().toTypedArray())
-
-        // size
-        assertThat(dict.words().size).isEqualTo(5)
     }
 }

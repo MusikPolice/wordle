@@ -4,13 +4,9 @@ import ca.jonathanfritz.wordle.Utils
 import kotlin.math.roundToInt
 
 // first guess from this comparator is "harem"
-// TODO: caches can be removed if we switch to insertion sort
 class MonogramComparator : WordleComparator {
 
     private var monogramWeights: Map<Char, Float> = HashMap()
-    private val comparatorCache: MutableMap<String, Int> = HashMap()
-    private val scoreCache: MutableMap<String, Int> = HashMap()
-
     private val monogramDecayRate = 0.25f
 
     init {
@@ -35,17 +31,13 @@ class MonogramComparator : WordleComparator {
 
     // sorts descending so that words with the highest score are at the top of the list
     override fun compare(s1: String?, s2: String?): Int {
-        return comparatorCache.computeIfAbsent("$s1.$s2") {
-            score(s2!!) - score(s1!!)
-        }
+        return score(s2!!) - score(s1!!)
     }
 
     override fun name() = "MonogramComparator"
 
     // sums the score of each character in the string, ignoring duplicate characters
     override fun score(s: String): Int {
-        return scoreCache.computeIfAbsent(s) { string ->
-            string.map { it }.distinct().sumOf { char -> monogramWeights[char]?.roundToInt() ?: 0 }
-        }
+        return s.map { it }.distinct().sumOf { char -> monogramWeights[char]?.roundToInt() ?: 0 }
     }
 }

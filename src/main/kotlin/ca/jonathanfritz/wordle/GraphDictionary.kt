@@ -1,5 +1,8 @@
 package ca.jonathanfritz.wordle
 
+import ca.jonathanfritz.wordle.comparators.WordleComparator
+import java.lang.IllegalStateException
+
 /*
  * There's a bug in here somewhere
  * 12971/12972: Answer is zymic
@@ -13,12 +16,22 @@ package ca.jonathanfritz.wordle
  */
 class GraphDictionary(
     words: List<String>,
+    comparator: WordleComparator,
     private val wordLength: Int = 5
 ) {
     private val charNodes: MutableSet<CharNode> = HashSet()
     private val posCharNodes: MutableSet<PosCharNode> = HashSet()
 
+    private val sortedWords: MutableList<String?> = ArrayList()
+    private val wordPositions: MutableMap<String, Int> = HashMap()
+
     init {
+        // builds the sorted list of words
+        sortedWords.addAll(words.sortedWith(comparator))
+        sortedWords.forEachIndexed{ i, word ->
+            wordPositions[word!!] = i
+        }
+
         // builds the graph of position -> char -> word
         words.distinct().forEach { word ->
             if (word.length != wordLength) {
@@ -105,19 +118,18 @@ class GraphDictionary(
                     parent.children.remove(wordNode)
                 }
             }
+
+            // null out the word that is being removed
+            val index = wordPositions[wordNode.word] ?: throw IllegalStateException("Position of ${wordNode.word} not found")
+            sortedWords.removeAt(index)
+            sortedWords.add(index, null)
         }
         posCharNode.children.clear()
     }
 
     // returns the unsorted list of remaining words
     fun words(): List<String> {
-        val charWords = charNodes.flatMap { it.children }.map { it.word }.toSet()
-        val posCharWords = posCharNodes.flatMap { it.children }.map { it.word }.toSet()
-        return (charWords + posCharWords).distinct()
-    }
-
-    fun words(comparator: Comparator<in String>): List<String> {
-        return words().sortedWith(comparator)
+        return sortedWords.filterNotNull().map { it }.toList()
     }
 
     fun size(): Int = words().size

@@ -42,7 +42,7 @@ internal class BigramComparatorTest {
         assertThat(comparator.compare("that", "chat")).isEqualTo(-26)
 
         // score ranking is correct
-        assertThat(comparator.compare("NR", "OK")).isGreaterThan(0)
+        assertThat(comparator.compare("TH", "QZ")).isEqualTo(-99)
     }
 
     @Test

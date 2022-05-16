@@ -3,6 +3,7 @@ package ca.jonathanfritz.wordle
 import ca.jonathanfritz.wordle.comparators.BigramComparator
 import ca.jonathanfritz.wordle.comparators.CombinedComparator
 import ca.jonathanfritz.wordle.comparators.MonogramComparator
+import ca.jonathanfritz.wordle.comparators.WordleComparator
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
 import kotlin.random.Random
@@ -17,14 +18,14 @@ class Wordle(
      * Attempts to solve the puzzle
      * @return the number of turns required to find a solution
      */
-    fun run(comparator: Comparator<in String>, debugOutput: Boolean = false): Int {
+    fun run(comparator: WordleComparator, debugOutput: Boolean = false): Int {
         val correctLetters: MutableSet<Char> = HashSet()
         val presentLetters: MutableSet<Char> = HashSet()
         val absentLetters: MutableSet<Char> = HashSet()
 
-        var dictionary = GraphDictionary(wordList)
+        var dictionary = GraphDictionary(wordList, comparator)
         for (turn in 0 until numGuesses) {
-            val remainingWords = dictionary.words(comparator)
+            val remainingWords = dictionary.words()
             println("${remainingWords.size} words remain in the dictionary")
             val nextGuess = remainingWords.first()
             println("Guess ${turn + 1} is $nextGuess")
