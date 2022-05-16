@@ -26,6 +26,7 @@ The `--quantify` flag measures the performance of the algorithm by solving for e
 * `#b998d9b0` required 6.13 guesses
 * `#12565f6` required 6.42 guesses
 * `#05fdc23` required 5.15 guesses
+* `#082d5e4` required 5.72 guesses
 
 ## Data
 * The word list comes from [this pastebin](https://paste.ee/p/4zigF) of Wordle answers
