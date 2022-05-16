@@ -1,5 +1,16 @@
 package ca.jonathanfritz.wordle
 
+/*
+ * There's a bug in here somewhere
+ * 12971/12972: Answer is zymic
+ * 12972 words remain in the dictionary
+ * Guess 1 is harem
+ * 2160 words remain in the dictionary
+ * Guess 2 is sting TODO: WHERE'S THE M?
+ * 329 words remain in the dictionary
+ * ...
+ * The solution is zymic
+ */
 class GraphDictionary(
     words: List<String>,
     private val wordLength: Int = 5

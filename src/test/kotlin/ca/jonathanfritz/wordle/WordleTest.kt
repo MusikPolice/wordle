@@ -1,5 +1,6 @@
 package ca.jonathanfritz.wordle
 
+import ca.jonathanfritz.wordle.comparators.MonogramComparator
 import org.junit.jupiter.api.Test
 import kotlin.collections.ArrayList
 import kotlin.math.roundToInt

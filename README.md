@@ -10,16 +10,11 @@ The algorithm is simple:
 This algorithm is implemented in [Wordle.kt](src/main/kotlin/ca/jonathanfritz/wordle/Wordle.kt)
 
 ### Known Issues
-This algorithm is pretty naive. Some limitations include:
-* Guessing the first word in the dictionary is often sub-optimal
-* The algorithm does not keep track of the letter positions that have already been tested, which means that it wastes guesses re-discovering information that it already knows
-* Words that include the same letter twice are guessed, wasting an opportunity to gain more knowledge
+All three existing comparators are based on the idea that a better guess contains characters or ngrams that are more common in the english language than not.
 
-I intend to fix these issues by ranking the remaining words in the dictionary by some heuristic that includes:
-* Whether the word contains duplicate letters
-* Prevalence of letters in the English language
-* Prevalence of ngrams in the English language
-* Some measure of how much additional information is expected to be gained by each valid guess
+In practice, it's not clear that this is the best way to choose a guess.
+
+Currently, the score fall off for both monograms and bigrams is linear. Future improvements may attempt to improve performance by causing the score to fall off much faster for lower-ranked ngrams.
 
 ### Performance
 The `--quantify` flag measures the performance of the algorithm by solving for every word in the dictionary and reporting the average number of guesses that were required to find a solution.
@@ -27,6 +22,8 @@ The `--quantify` flag measures the performance of the algorithm by solving for e
 * `#12565f6` required 6.42 guesses
 * `#05fdc23` required 5.15 guesses
 * `#082d5e4` required 5.72 guesses
+* `#fb6f916` required 6.06 guesses
+* current is 5.25 guesses
 
 ## Data
 * The word list comes from [this pastebin](https://paste.ee/p/4zigF) of Wordle answers

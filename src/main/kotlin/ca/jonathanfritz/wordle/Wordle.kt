@@ -1,5 +1,8 @@
 package ca.jonathanfritz.wordle
 
+import ca.jonathanfritz.wordle.comparators.BigramComparator
+import ca.jonathanfritz.wordle.comparators.CombinedComparator
+import ca.jonathanfritz.wordle.comparators.MonogramComparator
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
 import kotlin.random.Random
@@ -95,7 +98,7 @@ fun main(args: Array<String>) {
     val quantify by parser.option(ArgType.Boolean, shortName = "q", description = "Quantify skill of the algorithm")
     parser.parse(args)
 
-    val comparator = CombinedComparator()
+    val comparator = CombinedComparator(MonogramComparator(), BigramComparator())
     if (random == true) {
         Wordle(words, words[Random.nextInt(words.size)]).run(comparator, true)
     } else if (solution != null && solution!!.isNotBlank()) {

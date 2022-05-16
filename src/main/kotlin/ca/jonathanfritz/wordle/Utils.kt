@@ -2,33 +2,24 @@ package ca.jonathanfritz.wordle
 
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.math.exp
 
 class Utils {
     companion object {
 
-        fun loadMonogramWeights(): Map<Char, Int> {
-            // monograms file contains one character per line, sorted most common to least
-            return loadLinesFromFile("englishmonograms.txt")
-                .reversed()                 // reverse the list so that more common characters get a higher score
-                .map {
-                    it[0].lowercaseChar()   // everything is lower cased so that equality checks work
-                }
-                .mapIndexed { i, char ->
-                    char to (i + 1) * 2     // E will get a score of 26*2 = 52, while Q will get a score of 1*2 = 2
-                }
-                .toMap()
-        }
+        private const val MAX_WEIGHT = 100
+        private const val MIN_WEIGHT = 1
 
-        fun loadBigramWeights(): Map<String, Int> {
-            // bigrams file contains one bigram per line, sorted most common to least
-            return loadLinesFromFile("englishbigrams.txt")
-                .reversed()                 // reverse the list so that more common bigrams get a higher score
-                .map { it.lowercase() }     // lower case everything so that equality checks work
-                .mapIndexed {i, bigram ->
-                    bigram to (i + 1) * 2   // TH will get a score of 676*2 = 1352, while QZ will get a score of 1*2 = 2
-                }
-                .toMap()
-        }
+        /**
+         * Computes an exponential decay on the specified value with the specified rate
+         */
+        fun decay(value: Int, rate: Float): Float = MAX_WEIGHT * exp(rate * -value)
+
+        /**
+         * Scales the specified value such that it falls within the range of 1..100
+         */
+        fun scale(value: Float, minValue: Float, maxValue: Float): Float =
+            (((MAX_WEIGHT - MIN_WEIGHT)/(maxValue - minValue)) * (value - maxValue) + MAX_WEIGHT)
 
         fun loadLinesFromFile(filename: String): List<String> {
             val path = getPathToFile(filename)
