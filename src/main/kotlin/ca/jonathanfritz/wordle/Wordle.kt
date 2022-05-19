@@ -99,7 +99,7 @@ fun main(args: Array<String>) {
     val quantify by parser.option(ArgType.Boolean, shortName = "q", description = "Quantify skill of the algorithm")
     parser.parse(args)
 
-    val comparator = CombinedComparator(MonogramComparator(), BigramComparator())
+    val comparator = BigramComparator()
     if (random == true) {
         Wordle(words, words[Random.nextInt(words.size)]).run(comparator, true)
     } else if (solution != null && solution!!.isNotBlank()) {
